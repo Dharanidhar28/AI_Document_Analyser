@@ -31,5 +31,7 @@ def health_check():
 @app.get("/")
 def home(request: Request):
     if templates is None:
-        return {"message": "AI Document Analyser is running. Template directory not found."}
+        return {
+            "message": "AI Document Analyser is running. Template directory not found."
+        }
     return templates.TemplateResponse("index.html", {"request": request})
