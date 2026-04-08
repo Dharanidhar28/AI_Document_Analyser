@@ -4,6 +4,8 @@ huggingface_hub
 python-multipart
 pypdf
 langchain
+langchain-community
+langchain-text-splitters
 openai
 faiss-cpu
 tiktoken
