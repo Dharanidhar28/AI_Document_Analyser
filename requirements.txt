@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+huggingface_hub
+python-multipart
+pypdf
+langchain
+openai
+faiss-cpu
+tiktoken
+python-dotenv
+sentence-transformers
