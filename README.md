@@ -1,6 +1,6 @@
 # AI Document Analyser
 
-A resume-ready AI-powered document analysis web application built with FastAPI, Hugging Face, LangChain, and FAISS.
+AI-powered document analysis web application built with FastAPI, Hugging Face, LangChain, and FAISS.
 
 ## Project Overview
 
@@ -75,13 +75,6 @@ Open `http://127.0.0.1:8000` in your browser.
   - `What skills are listed?`
   - `Who is the contact person?`
   - `Summarize the main points from this document.`
-
-## Resume-Ready Impact Statements
-
-- Built an end-to-end AI document analytics application using FastAPI, FAISS, and Hugging Face inference.
-- Implemented PDF parsing and RAG workflow to enable natural-language querying over document content.
-- Designed a scalable retrieval pipeline with embeddings and semantic similarity search.
-- Added production-safe secret handling via `.env` and `.gitignore`.
 
 ## Next Improvements
 
