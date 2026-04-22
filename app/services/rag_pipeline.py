@@ -1,6 +1,6 @@
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 
 from huggingface_hub import InferenceClient
 import os
@@ -25,7 +25,8 @@ def create_vector_store(text):
 
     docs = splitter.create_documents([text])
 
-    embeddings = HuggingFaceEmbeddings(
+    embeddings = HuggingFaceInferenceAPIEmbeddings(
+        api_key=HF_TOKEN,
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 

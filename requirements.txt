@@ -1,6 +1,3 @@
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
-
 fastapi
 uvicorn
 huggingface_hub
@@ -11,4 +8,3 @@ langchain-community
 langchain-text-splitters
 faiss-cpu
 python-dotenv
-sentence-transformers
