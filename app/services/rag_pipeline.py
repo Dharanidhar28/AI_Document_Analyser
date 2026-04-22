@@ -24,6 +24,10 @@ def create_vector_store(text):
     splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
     docs = splitter.create_documents([text])
+    
+    # Limit to the first 15 chunks to avoid API timeouts on large documents
+    if len(docs) > 15:
+        docs = docs[:15]
 
     embeddings = HuggingFaceInferenceAPIEmbeddings(
         api_key=HF_TOKEN,

@@ -9,14 +9,14 @@ vector_db = None
 
 
 @router.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
+def upload_document(file: UploadFile = File(...)):
     global vector_db
 
     import os
     os.makedirs("uploads", exist_ok=True)
     file_path = f"uploads/{file.filename}"
 
-    contents = await file.read()
+    contents = file.file.read()
 
     with open(file_path, "wb") as f:
         f.write(contents)
