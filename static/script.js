@@ -2,6 +2,25 @@ function getElement(id) {
     return document.getElementById(id);
 }
 
+async function readResponsePayload(response) {
+    const contentType = response.headers.get("content-type") || "";
+    const rawBody = await response.text();
+
+    if (!rawBody) {
+        return {};
+    }
+
+    if (contentType.includes("application/json")) {
+        try {
+            return JSON.parse(rawBody);
+        } catch {
+            return { detail: rawBody };
+        }
+    }
+
+    return { detail: rawBody };
+}
+
 function addMessage(role, text) {
     const chatWindow = getElement("chatWindow");
     if (!chatWindow) {
@@ -67,7 +86,7 @@ async function uploadFile() {
 			body: formData,
 		});
 
-		const data = await response.json();
+		const data = await readResponsePayload(response);
 
         if (!response.ok) {
             throw new Error(data.detail || data.message || "Upload failed.");
@@ -112,7 +131,7 @@ async function askQuestion() {
             method: "POST"
         });
 
-        const data = await response.json();
+        const data = await readResponsePayload(response);
         if (!response.ok) {
             throw new Error(data.detail || "Error getting answer.");
         }
