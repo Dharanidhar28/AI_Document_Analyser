@@ -1,5 +1,9 @@
+import os
+
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from huggingface_hub.errors import HfHubHTTPError, InferenceTimeoutError
+from requests.exceptions import RequestException
+
 from app.services.pdf_parser import extract_text_from_pdf
 from app.services.rag_pipeline import create_vector_store, retrieve_context, generate_answer
 
@@ -11,21 +15,53 @@ vector_db = None
 @router.post("/upload")
 def upload_document(file: UploadFile = File(...)):
     global vector_db
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file was provided.")
 
-    import os
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+
     os.makedirs("uploads", exist_ok=True)
-    file_path = f"uploads/{file.filename}"
+    safe_filename = os.path.basename(file.filename)
+    file_path = os.path.join("uploads", safe_filename)
 
-    contents = file.file.read()
+    try:
+        contents = file.file.read()
+        with open(file_path, "wb") as f:
+            f.write(contents)
 
-    with open(file_path, "wb") as f:
-        f.write(contents)
+        text = extract_text_from_pdf(file_path)
+        if not text.strip():
+            raise HTTPException(
+                status_code=400,
+                detail="This PDF does not contain extractable text.",
+            )
 
-    # extract text
-    text = extract_text_from_pdf(file_path)
-
-    # create vector database
-    vector_db = create_vector_store(text)
+        vector_db = create_vector_store(text)
+    except HTTPException:
+        raise
+    except InferenceTimeoutError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="The embedding service timed out while processing the document.",
+        ) from exc
+    except HfHubHTTPError as exc:
+        response = getattr(exc, "response", None)
+        status_code = getattr(response, "status_code", 502) or 502
+        raise HTTPException(
+            status_code=status_code,
+            detail=f"Hugging Face embedding error: {exc}",
+        ) from exc
+    except RequestException as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="The embedding service could not be reached while indexing the document.",
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process the uploaded PDF: {exc}",
+        ) from exc
 
     return {"message": "Document processed successfully"}
 

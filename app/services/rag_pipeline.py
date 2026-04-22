@@ -31,7 +31,8 @@ def create_vector_store(text):
 
     embeddings = HuggingFaceInferenceAPIEmbeddings(
         api_key=HF_TOKEN,
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        api_url="https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2/pipeline/feature-extraction"
     )
 
     vector_store = FAISS.from_documents(docs, embeddings)
